@@ -24,11 +24,10 @@ export default class Video extends Component {
 
     this.state = {
       showPoster: !!props.poster,
+      seek: null,
+      fullscreen: false,
+      restoreUserInterfaceForPIPStopCompletionHandler: false,
     };
-  }
-
-  setNativeProps(nativeProps) {
-    this._root.setNativeProps(nativeProps);
   }
 
   toTypeString(x) {
@@ -58,23 +57,18 @@ export default class Video extends Component {
     if (isNaN(time)) {throw new Error('Specified time is not a number');}
 
     if (Platform.OS === 'ios') {
-      this.setNativeProps({
-        seek: {
-          time,
-          tolerance,
-        },
-      });
+      this.setState(state => ({ ...state, seek: { time, tolerance, } }));
     } else {
-      this.setNativeProps({ seek: time });
+      this.setState(state => ({ ...state, seek: time }));
     }
   };
 
   presentFullscreenPlayer = () => {
-    this.setNativeProps({ fullscreen: true });
+    this.setState(state => ({ ...state, fullscreen: true }));
   };
 
   dismissFullscreenPlayer = () => {
-    this.setNativeProps({ fullscreen: false });
+    this.setState(state => ({ ...state, fullscreen: false }));
   };
 
   save = async (options?) => {
@@ -82,7 +76,7 @@ export default class Video extends Component {
   }
 
   restoreUserInterfaceForPictureInPictureStopCompleted = (restored) => {
-    this.setNativeProps({ restoreUserInterfaceForPIPStopCompletionHandler: restored });
+    this.setState(state => ({ ...state, restoreUserInterfaceForPIPStopCompletionHandler: restored }));
   };
 
   _assignRoot = (component) => {
@@ -91,7 +85,7 @@ export default class Video extends Component {
 
   _hidePoster = () => {
     if (this.state.showPoster) {
-      this.setState({ showPoster: false });
+      this.setState(state => ({ ...state, showPoster: false }));
     }
   }
 
@@ -345,6 +339,9 @@ export default class Video extends Component {
         startTime: source.startTime || 0,
         endTime: source.endTime
       },
+      seek: this.state.seek,
+      fullscreen: this.state.fullscreen,
+      restoreUserInterfaceForPIPStopCompletionHandler: this.state.restoreUserInterfaceForPIPStopCompletionHandler,
       onVideoLoadStart: this._onLoadStart,
       onVideoPlaybackStateChanged: this._onPlaybackStateChanged,
       onVideoLoad: this._onLoad,
