@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, requireNativeComponent, NativeModules, UIManager, View, Image, Platform, findNodeHandle } from 'react-native';
+import { StyleSheet, requireNativeComponent, NativeModules, UIManager, View, Image, Platform } from 'react-native';
 import { ViewPropTypes, ImagePropTypes } from 'deprecated-react-native-prop-types';
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 import TextTrackType from './TextTrackType';
@@ -78,7 +78,7 @@ export default class Video extends Component {
   };
 
   save = async (options?) => {
-    return await NativeModules.VideoManager.save(options, findNodeHandle(this._root));
+    return await NativeModules.VideoManager.save(options, this._root);
   }
 
   restoreUserInterfaceForPictureInPictureStopCompleted = (restored) => {
@@ -267,15 +267,15 @@ export default class Video extends Component {
         const getLicensePromise = Promise.resolve(getLicenseOverride); // Handles both scenarios, getLicenseOverride being a promise and not.
         getLicensePromise.then((result => {
           if (result !== undefined) {
-            NativeModules.VideoManager.setLicenseResult(result, findNodeHandle(this._root));
+            NativeModules.VideoManager.setLicenseResult(result, this._root);
           } else {
-            NativeModules.VideoManager.setLicenseError && NativeModules.VideoManager.setLicenseError('Empty license result', findNodeHandle(this._root));
+            NativeModules.VideoManager.setLicenseError && NativeModules.VideoManager.setLicenseError('Empty license result', this._root);
           }
         })).catch((error) => {
-          NativeModules.VideoManager.setLicenseError && NativeModules.VideoManager.setLicenseError(error, findNodeHandle(this._root));
+          NativeModules.VideoManager.setLicenseError && NativeModules.VideoManager.setLicenseError(error, this._root);
         });
       } else {
-        NativeModules.VideoManager.setLicenseError && NativeModules.VideoManager.setLicenseError('No spc received', findNodeHandle(this._root));
+        NativeModules.VideoManager.setLicenseError && NativeModules.VideoManager.setLicenseError('No spc received', this._root);
       }
     }
   }
@@ -383,10 +383,9 @@ export default class Video extends Component {
 
     return (
       <View style={nativeProps.style}>
-        <RCTVideo
+        <VideoWithForwardedRef
           ref={this._assignRoot}
           {...nativeProps}
-          style={StyleSheet.absoluteFill}
         />
         {this.state.showPoster && (
           <Image style={posterStyle} source={{ uri: this.props.poster }} />
@@ -560,3 +559,13 @@ Video.propTypes = {
 };
 
 const RCTVideo = requireNativeComponent('RCTVideo');
+
+const VideoWithForwardedRef = React.forwardRef((props, forwardedRef) => {
+  return (
+    <RCTVideo
+      ref={forwardedRef}
+      {...props}
+      style={StyleSheet.absoluteFill}
+    />
+  );
+});
