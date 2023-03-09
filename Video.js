@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { StyleSheet, requireNativeComponent, NativeModules, UIManager, View, Image, Platform } from 'react-native';
-import { ViewPropTypes, ImagePropTypes } from 'deprecated-react-native-prop-types';
+import { StyleSheet, NativeModules, UIManager, View, Image, Platform } from 'react-native';
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 import TextTrackType from './TextTrackType';
 import FilterType from './FilterType';
 import DRMType from './DRMType';
 import VideoResizeMode from './VideoResizeMode.js';
+import VideoProps from './VideoProps';
+import VideoNativeComponent from './schema/VideoNativeComponent';
 
 const styles = StyleSheet.create({
   base: {
@@ -392,174 +392,11 @@ export default class Video extends Component {
   }
 }
 
-Video.propTypes = {
-  filter: PropTypes.oneOf([
-    FilterType.NONE,
-    FilterType.INVERT,
-    FilterType.MONOCHROME,
-    FilterType.POSTERIZE,
-    FilterType.FALSE,
-    FilterType.MAXIMUMCOMPONENT,
-    FilterType.MINIMUMCOMPONENT,
-    FilterType.CHROME,
-    FilterType.FADE,
-    FilterType.INSTANT,
-    FilterType.MONO,
-    FilterType.NOIR,
-    FilterType.PROCESS,
-    FilterType.TONAL,
-    FilterType.TRANSFER,
-    FilterType.SEPIA,
-  ]),
-  filterEnabled: PropTypes.bool,
-  onVideoLoadStart: PropTypes.func,
-  onVideoLoad: PropTypes.func,
-  onVideoBuffer: PropTypes.func,
-  onVideoError: PropTypes.func,
-  onVideoProgress: PropTypes.func,
-  onVideoBandwidthUpdate: PropTypes.func,
-  onVideoSeek: PropTypes.func,
-  onVideoEnd: PropTypes.func,
-  onTimedMetadata: PropTypes.func,
-  onVideoAudioBecomingNoisy: PropTypes.func,
-  onVideoExternalPlaybackChange: PropTypes.func,
-  onVideoFullscreenPlayerWillPresent: PropTypes.func,
-  onVideoFullscreenPlayerDidPresent: PropTypes.func,
-  onVideoFullscreenPlayerWillDismiss: PropTypes.func,
-  onVideoFullscreenPlayerDidDismiss: PropTypes.func,
-
-  /* Wrapper component */
-  source: PropTypes.oneOfType([
-    PropTypes.shape({
-      uri: PropTypes.string,
-    }),
-    // Opaque type returned by require('./video.mp4')
-    PropTypes.number,
-  ]),
-  drm: PropTypes.shape({
-    type: PropTypes.oneOf([
-      DRMType.CLEARKEY, DRMType.FAIRPLAY, DRMType.WIDEVINE, DRMType.PLAYREADY,
-    ]),
-    licenseServer: PropTypes.string,
-    headers: PropTypes.shape({}),
-    base64Certificate: PropTypes.bool,
-    certificateUrl: PropTypes.string,
-    getLicense: PropTypes.func,
-  }),
-  localSourceEncryptionKeyScheme: PropTypes.string,
-  minLoadRetryCount: PropTypes.number,
-  maxBitRate: PropTypes.number,
-  resizeMode: PropTypes.string,
-  poster: PropTypes.string,
-  posterResizeMode: ImagePropTypes.resizeMode,
-  repeat: PropTypes.bool,
-  automaticallyWaitsToMinimizeStalling: PropTypes.bool,
-  allowsExternalPlayback: PropTypes.bool,
-  selectedAudioTrack: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
-  }),
-  selectedVideoTrack: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
-  }),
-  selectedTextTrack: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
-  }),
-  textTracks: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string,
-      uri: PropTypes.string.isRequired,
-      type: PropTypes.oneOf([
-        TextTrackType.SRT,
-        TextTrackType.TTML,
-        TextTrackType.VTT,
-      ]),
-      language: PropTypes.string.isRequired,
-    })
-  ),
-  paused: PropTypes.bool,
-  muted: PropTypes.bool,
-  volume: PropTypes.number,
-  bufferConfig: PropTypes.shape({
-    minBufferMs: PropTypes.number,
-    maxBufferMs: PropTypes.number,
-    bufferForPlaybackMs: PropTypes.number,
-    bufferForPlaybackAfterRebufferMs: PropTypes.number,
-    maxHeapAllocationPercent: PropTypes.number,
-  }),
-  rate: PropTypes.number,
-  pictureInPicture: PropTypes.bool,
-  playInBackground: PropTypes.bool,
-  preferredForwardBufferDuration: PropTypes.number,
-  playWhenInactive: PropTypes.bool,
-  ignoreSilentSwitch: PropTypes.oneOf(['ignore', 'obey']),
-  reportBandwidth: PropTypes.bool,
-  contentStartTime: PropTypes.number,
-  disableFocus: PropTypes.bool,
-  focusable: PropTypes.bool,
-  disableBuffering: PropTypes.bool,
-  controls: PropTypes.bool,
-  audioOnly: PropTypes.bool,
-  fullscreenAutorotate: PropTypes.bool,
-  fullscreenOrientation: PropTypes.oneOf(['all', 'landscape', 'portrait']),
-  progressUpdateInterval: PropTypes.number,
-  subtitleStyle: PropTypes.shape({
-    paddingTop: PropTypes.number,
-    paddingBottom: PropTypes.number,
-    paddingLeft: PropTypes.number,
-    paddingRight: PropTypes.number,
-    fontSize: PropTypes.number,
-  }),
-  useTextureView: PropTypes.bool,
-  useSecureView: PropTypes.bool,
-  hideShutterView: PropTypes.bool,
-  onLoadStart: PropTypes.func,
-  onPlaybackStateChanged: PropTypes.func,
-  onLoad: PropTypes.func,
-  onAudioTracks: PropTypes.func,
-  onTextTracks: PropTypes.func,
-  onVideoTracks: PropTypes.func,
-  onBuffer: PropTypes.func,
-  onError: PropTypes.func,
-  onProgress: PropTypes.func,
-  onBandwidthUpdate: PropTypes.func,
-  onSeek: PropTypes.func,
-  onEnd: PropTypes.func,
-  onFullscreenPlayerWillPresent: PropTypes.func,
-  onFullscreenPlayerDidPresent: PropTypes.func,
-  onFullscreenPlayerWillDismiss: PropTypes.func,
-  onFullscreenPlayerDidDismiss: PropTypes.func,
-  onReadyForDisplay: PropTypes.func,
-  onPlaybackStalled: PropTypes.func,
-  onPlaybackResume: PropTypes.func,
-  onPlaybackRateChange: PropTypes.func,
-  onAudioFocusChanged: PropTypes.func,
-  onAudioBecomingNoisy: PropTypes.func,
-  onPictureInPictureStatusChanged: PropTypes.func,
-  onExternalPlaybackChange: PropTypes.func,
-  adTagUrl: PropTypes.string,
-  onReceiveAdEvent: PropTypes.func,
-
-  /* Required by react-native */
-  ...ViewPropTypes,
-};
-
-const RCTVideo = requireNativeComponent('RCTVideo');
+Video.propTypes = VideoProps;
 
 const VideoWithForwardedRef = React.forwardRef((props, forwardedRef) => {
   return (
-    <RCTVideo
+    <VideoNativeComponent
       ref={forwardedRef}
       {...props}
       style={StyleSheet.absoluteFill}
